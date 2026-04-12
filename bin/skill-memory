@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+# skill-memory: append-only lesson log for AI agents.
+# Usage: skill-memory {learn|recall|list|count} [args...]
+set -euo pipefail
+
+MEM_DIR="${SKILL_MEMORY_DIR:-$HOME/.skill-memory}"
+LOG="$MEM_DIR/lessons.jsonl"
+mkdir -p "$MEM_DIR"
+touch "$LOG"
+
+have_jq() { command -v jq >/dev/null 2>&1; }
+
+fmt_line() {
+  if have_jq; then
+    jq -r '"[\(.ts | sub("T.*"; ""))] \(.lesson)"'
+  else
+    sed -E 's/.*"ts":"([^T]+)[^"]*".*"lesson":"([^"]*)".*/[\1] \2/'
+  fi
+}
+
+cmd="${1:-help}"; shift || true
+
+case "$cmd" in
+  learn)
+    lesson="$*"
+    [ -z "$lesson" ] && { echo "usage: skill-memory learn <lesson>" >&2; exit 1; }
+    ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    cwd="$(pwd)"
+    if have_jq; then
+      jq -cn --arg ts "$ts" --arg cwd "$cwd" --arg lesson "$lesson" \
+        '{ts:$ts,cwd:$cwd,lesson:$lesson}' >> "$LOG"
+    else
+      esc_lesson=$(printf '%s' "$lesson" | sed 's/\\/\\\\/g; s/"/\\"/g')
+      esc_cwd=$(printf '%s' "$cwd" | sed 's/\\/\\\\/g; s/"/\\"/g')
+      printf '{"ts":"%s","cwd":"%s","lesson":"%s"}\n' "$ts" "$esc_cwd" "$esc_lesson" >> "$LOG"
+    fi
+    echo "✓ logged ($(wc -l < "$LOG" | tr -d ' ') total)"
+    ;;
+  recall)
+    q="${*:-}"
+    if [ -z "$q" ]; then
+      tail -20 "$LOG" | fmt_line
+    else
+      matches=$(grep -i -- "$q" "$LOG" || true)
+      if [ -z "$matches" ]; then
+        echo "no matches for: $q" >&2
+        exit 0
+      fi
+      printf '%s\n' "$matches" | fmt_line
+    fi
+    ;;
+  list)
+    fmt_line < "$LOG"
+    ;;
+  count)
+    wc -l < "$LOG" | tr -d ' '
+    ;;
+  help|-h|--help|"")
+    cat <<EOF
+skill-memory — append-only lesson log for AI agents
+
+Commands:
+  learn <lesson>    Append a lesson. Format: "When X, do Y. Because Z."
+  recall [query]    Search lessons (no query → last 20)
+  list              Print all lessons
+  count             How many lessons logged
+
+Storage: ~/.skill-memory/lessons.jsonl (override with \$SKILL_MEMORY_DIR)
+EOF
+    ;;
+  *)
+    echo "unknown command: $cmd" >&2
+    echo "try: skill-memory help" >&2
+    exit 1
+    ;;
+esac

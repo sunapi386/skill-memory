@@ -1,0 +1,3 @@
+{"ts":"2026-04-12T18:00:00Z","cwd":"/home/jason/workspace/aceteam-ai/aceteam","lesson":"When writing Supabase queries in TypeScript, use .throwOnError() instead of manual error checks. Because the generated types assume success and manual checks are redundant noise."}
+{"ts":"2026-04-12T18:05:00Z","cwd":"/home/jason/workspace/aceteam-ai/aceteam","lesson":"When a Next.js dev server seems stale, check for zombie processes on port 3000 before restarting. Because Next.js processes outlive their parent terminal session."}
+{"ts":"2026-04-12T18:12:00Z","cwd":"/home/jason/workspace/aceteam-ai/aceteam","lesson":"When an agent hits a flaky test, grep the test name in ~/.skill-memory/lessons.jsonl before retrying. Because the same flake has probably been logged before."}

@@ -8,8 +8,16 @@ No server. No database. No config. One file: `~/.skill-memory/lessons.jsonl`.
 
 ## Install (one line)
 
+**bash / zsh:**
+
 ```bash
 bash <(curl -fsSL https://raw.githubusercontent.com/sunapi386/skill-memory/main/install.sh)
+```
+
+**fish:**
+
+```fish
+curl -fsSL https://raw.githubusercontent.com/sunapi386/skill-memory/main/install.sh | bash
 ```
 
 This installs:

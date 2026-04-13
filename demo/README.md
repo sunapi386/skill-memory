@@ -31,9 +31,14 @@ Shows `No such file or directory`. That's the problem — empty brain.
 
 > "One command. Installs the CLI and the OpenClaw skill definition."
 
-**Left:**
+**Left (bash / zsh):**
 ```bash
 bash <(curl -fsSL https://raw.githubusercontent.com/sunapi386/skill-memory/main/install.sh)
+```
+
+**Left (fish):**
+```fish
+curl -fsSL https://raw.githubusercontent.com/sunapi386/skill-memory/main/install.sh | bash
 ```
 
 ```bash

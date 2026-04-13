@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Seed three demo lessons via the installed CLI.
-# Run from the repo root: ./demo/seed.sh
+# Requires skill-memory to be installed first — run the installer in Beat 2.
 set -euo pipefail
 
 if ! command -v skill-memory >/dev/null 2>&1; then
   echo "✗ skill-memory not installed"
-  echo "  run the installer first:"
+  echo "  install first:"
   echo "    bash <(curl -fsSL https://raw.githubusercontent.com/sunapi386/skill-memory/main/install.sh)"
   exit 1
 fi
